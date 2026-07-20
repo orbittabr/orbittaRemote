@@ -62,6 +62,8 @@ pub const PLATFORM_ANDROID: &str = "Android";
 
 pub const TIMER_OUT: Duration = Duration::from_secs(1);
 pub const DEFAULT_KEEP_ALIVE: i32 = 60_000;
+const ORBITTA_DEFAULT_SERVER: &str = "137.131.214.246";
+const ORBITTA_DEFAULT_KEY: &str = "PiAZafbKBIiq1desBgaULaSE8umltyrmQ+G4NINm2Qk=";
 
 const MIN_VER_MULTI_UI_SESSION: &str = "1.2.4";
 
@@ -2080,7 +2082,22 @@ pub fn rustdesk_interval(i: Interval) -> ThrottledInterval {
     ThrottledInterval::new(i)
 }
 
+fn load_orbitta_default_server_settings() {
+    let mut defaults = config::DEFAULT_SETTINGS.write().unwrap();
+    defaults.insert(
+        keys::OPTION_CUSTOM_RENDEZVOUS_SERVER.to_owned(),
+        ORBITTA_DEFAULT_SERVER.to_owned(),
+    );
+    defaults.insert(
+        keys::OPTION_RELAY_SERVER.to_owned(),
+        ORBITTA_DEFAULT_SERVER.to_owned(),
+    );
+    defaults.insert(keys::OPTION_KEY.to_owned(), ORBITTA_DEFAULT_KEY.to_owned());
+}
+
 pub fn load_custom_client() {
+    load_orbitta_default_server_settings();
+
     #[cfg(debug_assertions)]
     if let Ok(data) = std::fs::read_to_string("./custom.txt") {
         read_custom_client(data.trim());

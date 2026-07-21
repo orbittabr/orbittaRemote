@@ -80,98 +80,188 @@ class _DesktopHomePageState extends State<DesktopHomePage>
   }
 
   Widget buildQuickSupportPane(BuildContext context) {
-    return Container(
-      color: Theme.of(context).scaffoldBackgroundColor,
-      child: Align(
-        alignment: Alignment.topCenter,
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 360),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                buildQuickSupportIdentityCard(context),
-                const SizedBox(height: 12),
-                buildQuickSupportConnectCard(context),
-                buildQuickSupportStatus(context),
-              ],
+    return Theme(
+      data: MyTheme.lightTheme,
+      child: Builder(builder: (context) {
+        return Container(
+          color: const Color(0xFFF7F8FC),
+          child: Align(
+            alignment: Alignment.topCenter,
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 420),
+                child: buildQuickSupportCard(context),
+              ),
             ),
+          ),
+        );
+      }),
+    );
+  }
+
+  Widget buildQuickSupportCard(BuildContext context) {
+    return ChangeNotifierProvider.value(
+      value: gFFI.serverModel,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: const BorderRadius.all(Radius.circular(8)),
+          border: Border.all(color: const Color(0xFFE6E8F0)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.08),
+              blurRadius: 24,
+              offset: const Offset(0, 14),
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: const BorderRadius.all(Radius.circular(8)),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                height: 3,
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Color(0xFF0B7CFF),
+                      Color(0xFF5227FF),
+                      Color(0xFFE93BAE)
+                    ],
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(24, 22, 24, 24),
+                child: Consumer<ServerModel>(
+                  builder: (context, model, child) {
+                    return Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Center(
+                          child: Image.asset(
+                            'assets/orbitta_logo_light.png',
+                            height: 48,
+                            fit: BoxFit.contain,
+                          ),
+                        ),
+                        const SizedBox(height: 22),
+                        Text(
+                          translate("Your Desktop"),
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleLarge
+                              ?.copyWith(fontWeight: FontWeight.w600),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          translate("desk_tip"),
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall
+                              ?.copyWith(color: const Color(0xFF5E6272)),
+                        ),
+                        const SizedBox(height: 14),
+                        buildQuickSupportValueTile(
+                          context,
+                          label: translate("ID"),
+                          value: model.serverId.text,
+                          icon: Icons.computer,
+                        ),
+                        const SizedBox(height: 10),
+                        buildQuickSupportValueTile(
+                          context,
+                          label: translate("One-time Password"),
+                          value: model.serverPasswd.text,
+                          icon: Icons.lock_outline,
+                        ),
+                        const SizedBox(height: 18),
+                        const Divider(height: 1),
+                        const SizedBox(height: 18),
+                        const ConnectionPage(compact: true),
+                        const SizedBox(height: 10),
+                        OnlineStatusWidget(),
+                      ],
+                    );
+                  },
+                ),
+              ),
+            ],
           ),
         ),
       ),
     );
   }
 
-  Widget buildQuickSupportIdentityCard(BuildContext context) {
-    return ChangeNotifierProvider.value(
-      value: gFFI.serverModel,
-      child: Theme(
-        data: MyTheme.lightTheme,
-        child: Builder(builder: (context) {
-          return Container(
-            width: 286,
-            decoration: BoxDecoration(
-              color: const Color(0xFFF0F0F5),
-              borderRadius: const BorderRadius.all(Radius.circular(8)),
-              border: Border.all(color: const Color(0xFFE2E2EA)),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
-                  blurRadius: 16,
-                  offset: const Offset(0, 8),
+  Widget buildQuickSupportValueTile(
+    BuildContext context, {
+    required String label,
+    required String value,
+    required IconData icon,
+  }) {
+    final displayValue = value.isEmpty ? "-" : value;
+    return Material(
+      color: const Color(0xFFF7F8FC),
+      borderRadius: const BorderRadius.all(Radius.circular(8)),
+      child: InkWell(
+        borderRadius: const BorderRadius.all(Radius.circular(8)),
+        onTap: () {
+          Clipboard.setData(ClipboardData(text: displayValue));
+          showToast(translate("Copied"));
+        },
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+          decoration: BoxDecoration(
+            borderRadius: const BorderRadius.all(Radius.circular(8)),
+            border: Border.all(color: const Color(0xFFE6E8F0)),
+          ),
+          child: Row(
+            children: [
+              Container(
+                height: 34,
+                width: 34,
+                decoration: const BoxDecoration(
+                  color: Color(0xFFEDE9FF),
+                  borderRadius: BorderRadius.all(Radius.circular(8)),
                 ),
-              ],
-            ),
-            child: ClipRRect(
-              borderRadius: const BorderRadius.all(Radius.circular(8)),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    width: double.infinity,
-                    margin: const EdgeInsets.fromLTRB(10, 10, 10, 6),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 12, vertical: 10),
-                    decoration: const BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.all(Radius.circular(6)),
+                child: Icon(icon, color: const Color(0xFF5227FF), size: 18),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      label,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: const Color(0xFF6F7280),
+                            fontSize: 12,
+                          ),
                     ),
-                    child: Image.asset(
-                      'assets/orbitta_logo_light.png',
-                      height: 44,
-                      fit: BoxFit.contain,
-                    ),
-                  ),
-                  buildTip(context),
-                  buildIDBoard(context),
-                  buildPasswordBoard(context),
-                  Container(
-                    height: 2,
-                    decoration: const BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [Color(0xFF5227FF), Color(0xFFE93BAE)],
+                    const SizedBox(height: 2),
+                    Text(
+                      displayValue,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        color: Color(0xFF1F2230),
+                        fontFamily: 'WorkSans',
+                        fontSize: 22,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          );
-        }),
+              const SizedBox(width: 10),
+              const Icon(Icons.copy, color: Color(0xFF8A8E9D), size: 18),
+            ],
+          ),
+        ),
       ),
-    );
-  }
-
-  Widget buildQuickSupportConnectCard(BuildContext context) {
-    return const ConnectionPage(compact: true);
-  }
-
-  Widget buildQuickSupportStatus(BuildContext context) {
-    return Container(
-      width: 360,
-      padding: const EdgeInsets.only(top: 8),
-      child: OnlineStatusWidget(),
     );
   }
 

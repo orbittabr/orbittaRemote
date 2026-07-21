@@ -354,25 +354,14 @@ class _ConnectionPageState extends State<ConnectionPage>
     var w = Container(
       width: 320 + 20 * 2,
       padding: compact
-          ? const EdgeInsets.fromLTRB(20, 20, 20, 20)
+          ? const EdgeInsets.fromLTRB(0, 12, 0, 0)
           : const EdgeInsets.fromLTRB(20, 24, 20, 22),
       decoration: BoxDecoration(
-        color: compact ? Theme.of(context).cardColor : null,
+        color: compact ? Colors.transparent : null,
         borderRadius: BorderRadius.all(Radius.circular(compact ? 8 : 13)),
-        border: Border.all(
-          color: compact
-              ? Theme.of(context).dividerColor
-              : Theme.of(context).colorScheme.background,
-        ),
-        boxShadow: compact
-            ? [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.06),
-                  blurRadius: 18,
-                  offset: const Offset(0, 8),
-                ),
-              ]
-            : null,
+        border: compact
+            ? null
+            : Border.all(color: Theme.of(context).colorScheme.background),
       ),
       child: Ink(
         child: Column(

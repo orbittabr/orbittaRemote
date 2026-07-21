@@ -1,0 +1,12 @@
+name: Orbitta Windows QS Build
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-orbitta-windows-qs:
+    uses: ./.github/workflows/flutter-build.yml
+    secrets: inherit
+    with:
+      upload-artifact: true
+      upload-tag: "orbitta-windows-qs"

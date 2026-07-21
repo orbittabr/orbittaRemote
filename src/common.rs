@@ -2092,21 +2092,28 @@ pub fn rustdesk_interval(i: Interval) -> ThrottledInterval {
     ThrottledInterval::new(i)
 }
 
-fn load_orbitta_default_server_settings() {
-    let mut defaults = config::DEFAULT_SETTINGS.write().unwrap();
-    defaults.insert(
+fn load_orbitta_client_settings() {
+    let mut overwrite = config::OVERWRITE_SETTINGS.write().unwrap();
+    overwrite.insert(
         keys::OPTION_CUSTOM_RENDEZVOUS_SERVER.to_owned(),
         ORBITTA_DEFAULT_SERVER.to_owned(),
     );
-    defaults.insert(
+    overwrite.insert(
         keys::OPTION_RELAY_SERVER.to_owned(),
         ORBITTA_DEFAULT_SERVER.to_owned(),
     );
-    defaults.insert(keys::OPTION_KEY.to_owned(), ORBITTA_DEFAULT_KEY.to_owned());
+    overwrite.insert(keys::OPTION_KEY.to_owned(), ORBITTA_DEFAULT_KEY.to_owned());
+    overwrite.insert(keys::OPTION_ALLOW_AUTO_UPDATE.to_owned(), "N".to_owned());
+    overwrite.insert(keys::OPTION_ENABLE_CHECK_UPDATE.to_owned(), "N".to_owned());
+
+    config::HARD_SETTINGS
+        .write()
+        .unwrap()
+        .insert("disable-installation".to_owned(), "Y".to_owned());
 }
 
 pub fn load_custom_client() {
-    load_orbitta_default_server_settings();
+    load_orbitta_client_settings();
 
     #[cfg(debug_assertions)]
     if let Ok(data) = std::fs::read_to_string("./custom.txt") {
@@ -2308,7 +2315,7 @@ pub fn get_builtin_option(key: &str) -> String {
 
 #[inline]
 pub fn is_custom_client() -> bool {
-    get_app_name() != "RustDesk"
+    get_app_name() != "RustDesk" || get_display_name() == "Orbitta Remote"
 }
 
 pub fn verify_login(_raw: &str, _id: &str) -> bool {

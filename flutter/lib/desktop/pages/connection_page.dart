@@ -189,7 +189,9 @@ class _OnlineStatusWidgetState extends State<OnlineStatusWidget> {
 
 /// Connection page for connecting to a remote peer.
 class ConnectionPage extends StatefulWidget {
-  const ConnectionPage({Key? key}) : super(key: key);
+  const ConnectionPage({Key? key, this.compact = false}) : super(key: key);
+
+  final bool compact;
 
   @override
   State<ConnectionPage> createState() => _ConnectionPageState();
@@ -304,6 +306,14 @@ class _ConnectionPageState extends State<ConnectionPage>
   @override
   Widget build(BuildContext context) {
     final isOutgoingOnly = bind.isOutgoingOnly();
+    if (widget.compact) {
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _buildRemoteIDTextField(context, compact: true),
+        ],
+      );
+    }
     return Column(
       children: [
         Expanded(
@@ -340,13 +350,30 @@ class _ConnectionPageState extends State<ConnectionPage>
 
   /// UI for the remote ID TextField.
   /// Search for a peer.
-  Widget _buildRemoteIDTextField(BuildContext context) {
+  Widget _buildRemoteIDTextField(BuildContext context, {bool compact = false}) {
     var w = Container(
       width: 320 + 20 * 2,
-      padding: const EdgeInsets.fromLTRB(20, 24, 20, 22),
+      padding: compact
+          ? const EdgeInsets.fromLTRB(20, 20, 20, 20)
+          : const EdgeInsets.fromLTRB(20, 24, 20, 22),
       decoration: BoxDecoration(
-          borderRadius: const BorderRadius.all(Radius.circular(13)),
-          border: Border.all(color: Theme.of(context).colorScheme.background)),
+        color: compact ? Theme.of(context).cardColor : null,
+        borderRadius: BorderRadius.all(Radius.circular(compact ? 8 : 13)),
+        border: Border.all(
+          color: compact
+              ? Theme.of(context).dividerColor
+              : Theme.of(context).colorScheme.background,
+        ),
+        boxShadow: compact
+            ? [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.06),
+                  blurRadius: 18,
+                  offset: const Offset(0, 8),
+                ),
+              ]
+            : null,
+      ),
       child: Ink(
         child: Column(
           children: [

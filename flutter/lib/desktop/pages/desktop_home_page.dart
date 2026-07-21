@@ -60,6 +60,9 @@ class _DesktopHomePageState extends State<DesktopHomePage>
   Widget build(BuildContext context) {
     super.build(context);
     final isIncomingOnly = bind.isIncomingOnly();
+    if (isWindows && bind.isCustomClient() && !isIncomingOnly) {
+      return _buildBlock(child: buildQuickSupportPane(context));
+    }
     return _buildBlock(
         child: Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -74,6 +77,102 @@ class _DesktopHomePageState extends State<DesktopHomePage>
   Widget _buildBlock({required Widget child}) {
     return buildRemoteBlock(
         block: _block, mask: true, use: canBeBlocked, child: child);
+  }
+
+  Widget buildQuickSupportPane(BuildContext context) {
+    return Container(
+      color: Theme.of(context).scaffoldBackgroundColor,
+      child: Align(
+        alignment: Alignment.topCenter,
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 360),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                buildQuickSupportIdentityCard(context),
+                const SizedBox(height: 12),
+                buildQuickSupportConnectCard(context),
+                buildQuickSupportStatus(context),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget buildQuickSupportIdentityCard(BuildContext context) {
+    return ChangeNotifierProvider.value(
+      value: gFFI.serverModel,
+      child: Theme(
+        data: MyTheme.lightTheme,
+        child: Builder(builder: (context) {
+          return Container(
+            width: 286,
+            decoration: BoxDecoration(
+              color: const Color(0xFFF0F0F5),
+              borderRadius: const BorderRadius.all(Radius.circular(8)),
+              border: Border.all(color: const Color(0xFFE2E2EA)),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 16,
+                  offset: const Offset(0, 8),
+                ),
+              ],
+            ),
+            child: ClipRRect(
+              borderRadius: const BorderRadius.all(Radius.circular(8)),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: double.infinity,
+                    margin: const EdgeInsets.fromLTRB(10, 10, 10, 6),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 12, vertical: 10),
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.all(Radius.circular(6)),
+                    ),
+                    child: Image.asset(
+                      'assets/orbitta_logo_light.png',
+                      height: 44,
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                  buildTip(context),
+                  buildIDBoard(context),
+                  buildPasswordBoard(context),
+                  Container(
+                    height: 2,
+                    decoration: const BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Color(0xFF5227FF), Color(0xFFE93BAE)],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }),
+      ),
+    );
+  }
+
+  Widget buildQuickSupportConnectCard(BuildContext context) {
+    return const ConnectionPage(compact: true);
+  }
+
+  Widget buildQuickSupportStatus(BuildContext context) {
+    return Container(
+      width: 360,
+      padding: const EdgeInsets.only(top: 8),
+      child: OnlineStatusWidget(),
+    );
   }
 
   Widget buildLeftPane(BuildContext context) {
@@ -461,7 +560,7 @@ class _DesktopHomePageState extends State<DesktopHomePage>
       return buildInstallCard("", systemError, "", () {});
     }
 
-    if (isWindows && !bind.isDisableInstallation()) {
+    if (isWindows && !bind.isDisableInstallation() && !bind.isCustomClient()) {
       if (!bind.mainIsInstalled()) {
         return buildInstallCard(
             "", bind.isOutgoingOnly() ? "" : "install_tip", "Install",

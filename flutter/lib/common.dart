@@ -3746,7 +3746,7 @@ Widget loadPowered(BuildContext context) {
     child: GestureDetector(
       onTap: () {
         launchUrl(Uri.parse(
-            isWindows ? 'https://orbitta.com.br' : 'https://rustdesk.com'));
+            isWindows ? 'https://www.orbitta.net.br' : 'https://rustdesk.com'));
       },
       child: Opacity(
           opacity: 0.5,

@@ -14,6 +14,7 @@ from pathlib import Path
 windows = platform.platform().startswith('Windows')
 osx = platform.platform().startswith(
     'Darwin') or platform.platform().startswith("macOS")
+portable_qs_name = 'OrbittaRemote-QS.exe'
 hbb_name = 'rustdesk' + ('.exe' if windows else '')
 exe_path = 'target/release/' + hbb_name
 if windows:
@@ -463,9 +464,12 @@ def build_flutter_windows(version, features, skip_portable_pack):
                   './rustdesk_portable.exe')
     print(
         f'output location: {os.path.abspath(os.curdir)}/rustdesk_portable.exe')
-    os.rename('./rustdesk_portable.exe', f'./rustdesk-{version}-install.exe')
+    if os.path.exists(f'./{portable_qs_name}'):
+        os.replace('./rustdesk_portable.exe', f'./{portable_qs_name}')
+    else:
+        os.rename('./rustdesk_portable.exe', f'./{portable_qs_name}')
     print(
-        f'output location: {os.path.abspath(os.curdir)}/rustdesk-{version}-install.exe')
+        f'output location: {os.path.abspath(os.curdir)}/{portable_qs_name}')
 
 
 def main():

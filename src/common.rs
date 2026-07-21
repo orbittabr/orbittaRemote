@@ -1007,6 +1007,16 @@ pub fn get_app_name() -> String {
 }
 
 #[inline]
+pub fn get_display_name() -> String {
+    let app_name = get_app_name();
+    #[cfg(windows)]
+    if app_name == "RustDesk" {
+        return "Orbitta Remote".to_owned();
+    }
+    app_name
+}
+
+#[inline]
 pub fn is_rustdesk() -> bool {
     hbb_common::config::APP_NAME.read().unwrap().eq("RustDesk")
 }

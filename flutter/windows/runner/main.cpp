@@ -159,13 +159,14 @@ int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE prev,
   // Fit the window to the monitor's work area.
   Win32Desktop::FitToWorkArea(origin, size);
 
+  const std::wstring display_name = L"Orbitta Remote";
   std::wstring window_title;
   if (is_cm_page) {
-    window_title = app_name + L" - Connection Manager";
+    window_title = display_name + L" - Connection Manager";
   } else if (is_install_page) {
-    window_title = app_name + L" - Install";
+    window_title = display_name + L" - Install";
   } else {
-    window_title = app_name;
+    window_title = display_name;
   }
   if (!window.CreateAndShow(window_title, origin, size, !is_cm_page)) {
       return EXIT_FAILURE;

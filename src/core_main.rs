@@ -166,6 +166,12 @@ pub fn core_main() -> Option<Vec<String>> {
         }
     }
     hbb_common::init_log(false, &log_name);
+    log::info!(
+        "Orbitta effective server config: rendezvous={}, relay={}, key_set={}",
+        config::Config::get_rendezvous_server(),
+        config::Config::get_option(config::keys::OPTION_RELAY_SERVER),
+        !config::Config::get_option(config::keys::OPTION_KEY).is_empty(),
+    );
 
     // linux uni (url) go here.
     #[cfg(all(target_os = "linux", feature = "flutter"))]

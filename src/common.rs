@@ -2105,6 +2105,15 @@ fn load_orbitta_client_settings() {
     overwrite.insert(keys::OPTION_KEY.to_owned(), ORBITTA_DEFAULT_KEY.to_owned());
     overwrite.insert(keys::OPTION_ALLOW_AUTO_UPDATE.to_owned(), "N".to_owned());
     overwrite.insert(keys::OPTION_ENABLE_CHECK_UPDATE.to_owned(), "N".to_owned());
+    overwrite.insert(
+        keys::OPTION_VERIFICATION_METHOD.to_owned(),
+        "use-temporary-password".to_owned(),
+    );
+    overwrite.insert(keys::OPTION_APPROVE_MODE.to_owned(), "password-click".to_owned());
+    overwrite.insert(
+        keys::OPTION_TEMPORARY_PASSWORD_LENGTH.to_owned(),
+        "6".to_owned(),
+    );
 
     config::HARD_SETTINGS
         .write()
@@ -2285,6 +2294,7 @@ pub fn read_custom_client(config: &str) {
                 .insert(k, v.to_owned());
         };
     }
+    load_orbitta_client_settings();
 }
 
 #[inline]

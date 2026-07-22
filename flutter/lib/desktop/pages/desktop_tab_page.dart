@@ -62,6 +62,16 @@ class _DesktopTabPageState extends State<DesktopTabPage> {
           setResizable(true);
         }
       };
+    } else if (isWindows && bind.isCustomClient()) {
+      tabController.onSelected = (key) {
+        if (key == kTabLabelHomePage) {
+          windowManager.setSize(getQuickSupportHomeSize());
+        } else {
+          windowManager.setSize(getQuickSupportSettingsSize());
+        }
+        windowManager.center();
+        setResizable(true);
+      };
     }
   }
 

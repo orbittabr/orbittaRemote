@@ -967,7 +967,7 @@ class _DesktopHomePageState extends State<DesktopHomePage>
     rustDeskWinManager.registerActiveWindowListener(onActiveWindowChanged);
     if (isWindows && bind.isCustomClient() && !bind.isIncomingOnly()) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        windowManager.setSize(const Size(532, 760));
+        windowManager.setSize(getQuickSupportHomeSize());
         windowManager.center();
       });
     }

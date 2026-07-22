@@ -3845,11 +3845,22 @@ Widget loadIcon(double size) {
 }
 
 var imcomingOnlyHomeSize = Size(280, 300);
+const quickSupportHomeSize = Size(532, 760);
+const quickSupportSettingsSize = Size(900, 720);
+
 Size getIncomingOnlyHomeSize() {
   final magicWidth = isWindows ? 11.0 : 2.0;
   final magicHeight = 10.0;
   return imcomingOnlyHomeSize +
       Offset(magicWidth, kDesktopRemoteTabBarHeight + magicHeight);
+}
+
+Size getQuickSupportHomeSize() {
+  return quickSupportHomeSize;
+}
+
+Size getQuickSupportSettingsSize() {
+  return quickSupportSettingsSize;
 }
 
 Size getIncomingOnlySettingsSize() {

@@ -187,9 +187,16 @@ jobs:
         if: ${{ matrix.job.arch == 'x86_64' }}
         shell: bash
         run: |
-          cp .github/patches/flutter_3.24.4_dropdown_menu_enableFilter.diff $(dirname $(dirname $(which flutter)))
-          cd $(dirname $(dirname $(which flutter)))
-          [[ "3.24.5" == ${{env.FLUTTER_VERSION}} ]] && git apply flutter_3.24.4_dropdown_menu_enableFilter.diff
+          patch_file="${GITHUB_WORKSPACE}/.github/patches/flutter_3.24.4_dropdown_menu_enableFilter.diff"
+          flutter_root="$(dirname "$(dirname "$(which flutter)")")"
+          cd "$flutter_root"
+          if [[ "${{ env.FLUTTER_VERSION }}" == "3.24.5" ]]; then
+            if git apply --check "$patch_file"; then
+              git apply "$patch_file"
+            else
+              echo "Flutter dropdown patch is already applied or no longer needed; continuing."
+            fi
+          fi
 
       - name: Patch RustDesk sources for Flutter 3.44 (arm64)
         # arm64 is the only target on Flutter 3.44; apply its source/pubspec deltas on the fly

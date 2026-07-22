@@ -88,9 +88,9 @@ class _DesktopHomePageState extends State<DesktopHomePage>
           child: Align(
             alignment: Alignment.topCenter,
             child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
+              padding: const EdgeInsets.fromLTRB(24, 24, 24, 30),
               child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 420),
+                constraints: const BoxConstraints(maxWidth: 480),
                 child: buildQuickSupportCard(context),
               ),
             ),
@@ -134,56 +134,83 @@ class _DesktopHomePageState extends State<DesktopHomePage>
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.fromLTRB(24, 22, 24, 24),
+                padding: const EdgeInsets.fromLTRB(30, 28, 30, 28),
                 child: Consumer<ServerModel>(
                   builder: (context, model, child) {
                     return Column(
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        Center(
-                          child: Image.asset(
-                            'assets/orbitta_logo_light.png',
-                            height: 48,
-                            fit: BoxFit.contain,
-                          ),
+                        Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            Center(
+                              child: Image.asset(
+                                'assets/orbitta_logo_light.png',
+                                height: 58,
+                                fit: BoxFit.contain,
+                              ),
+                            ),
+                            Positioned(
+                              right: 0,
+                              child: Tooltip(
+                                message: translate('Settings'),
+                                child: IconButton(
+                                  icon: const Icon(Icons.settings_outlined),
+                                  color: const Color(0xFF6F7280),
+                                  iconSize: 22,
+                                  splashRadius: 20,
+                                  onPressed: DesktopTabPage.onAddSetting,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                        const SizedBox(height: 22),
+                        const SizedBox(height: 28),
                         Text(
                           translate("Your Desktop"),
-                          style: Theme.of(context)
-                              .textTheme
-                              .titleLarge
-                              ?.copyWith(fontWeight: FontWeight.w600),
+                          style: const TextStyle(
+                            color: Color(0xFF1F2230),
+                            fontSize: 24,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
-                        const SizedBox(height: 4),
+                        const SizedBox(height: 6),
                         Text(
                           translate("desk_tip"),
                           style: Theme.of(context)
                               .textTheme
                               .bodySmall
-                              ?.copyWith(color: const Color(0xFF5E6272)),
+                              ?.copyWith(
+                                color: const Color(0xFF5E6272),
+                                fontSize: 14,
+                              ),
                         ),
-                        const SizedBox(height: 14),
+                        const SizedBox(height: 18),
                         buildQuickSupportValueTile(
                           context,
                           label: translate("ID"),
                           value: model.serverId.text,
                           icon: Icons.computer,
                         ),
-                        const SizedBox(height: 10),
+                        const SizedBox(height: 12),
                         buildQuickSupportValueTile(
                           context,
                           label: translate("One-time Password"),
                           value: model.serverPasswd.text,
                           icon: Icons.lock_outline,
                         ),
-                        const SizedBox(height: 18),
+                        const SizedBox(height: 24),
                         const Divider(height: 1),
-                        const SizedBox(height: 18),
+                        const SizedBox(height: 22),
                         const ConnectionPage(compact: true),
-                        const SizedBox(height: 10),
-                        OnlineStatusWidget(),
+                        const SizedBox(height: 18),
+                        Row(
+                          children: const [
+                            SizedBox(width: 2),
+                            OnlineStatusWidget(),
+                          ],
+                        ),
                       ],
                     );
                   },
@@ -213,7 +240,7 @@ class _DesktopHomePageState extends State<DesktopHomePage>
           showToast(translate("Copied"));
         },
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
           decoration: BoxDecoration(
             borderRadius: const BorderRadius.all(Radius.circular(8)),
             border: Border.all(color: const Color(0xFFE6E8F0)),
@@ -221,13 +248,13 @@ class _DesktopHomePageState extends State<DesktopHomePage>
           child: Row(
             children: [
               Container(
-                height: 34,
-                width: 34,
+                height: 42,
+                width: 42,
                 decoration: const BoxDecoration(
                   color: Color(0xFFEDE9FF),
                   borderRadius: BorderRadius.all(Radius.circular(8)),
                 ),
-                child: Icon(icon, color: const Color(0xFF5227FF), size: 18),
+                child: Icon(icon, color: const Color(0xFF5227FF), size: 22),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -241,7 +268,7 @@ class _DesktopHomePageState extends State<DesktopHomePage>
                             fontSize: 12,
                           ),
                     ),
-                    const SizedBox(height: 2),
+                    const SizedBox(height: 3),
                     Text(
                       displayValue,
                       maxLines: 1,
@@ -249,7 +276,7 @@ class _DesktopHomePageState extends State<DesktopHomePage>
                       style: const TextStyle(
                         color: Color(0xFF1F2230),
                         fontFamily: 'WorkSans',
-                        fontSize: 22,
+                        fontSize: 26,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -938,6 +965,12 @@ class _DesktopHomePageState extends State<DesktopHomePage>
     });
     Get.put<RxBool>(svcStopped, tag: 'stop-service');
     rustDeskWinManager.registerActiveWindowListener(onActiveWindowChanged);
+    if (isWindows && bind.isCustomClient() && !bind.isIncomingOnly()) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        windowManager.setSize(const Size(532, 760));
+        windowManager.center();
+      });
+    }
 
     screenToMap(window_size.Screen screen) => {
           'frame': {

@@ -352,7 +352,7 @@ class _ConnectionPageState extends State<ConnectionPage>
   /// Search for a peer.
   Widget _buildRemoteIDTextField(BuildContext context, {bool compact = false}) {
     var w = Container(
-      width: 320 + 20 * 2,
+      width: compact ? double.infinity : 320 + 20 * 2,
       padding: compact
           ? const EdgeInsets.fromLTRB(0, 12, 0, 0)
           : const EdgeInsets.fromLTRB(20, 24, 20, 22),
@@ -433,10 +433,10 @@ class _ConnectionPageState extends State<ConnectionPage>
                           enableSuggestions: false,
                           keyboardType: TextInputType.visiblePassword,
                           focusNode: fieldFocusNode,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontFamily: 'WorkSans',
-                            fontSize: 22,
-                            height: 1.4,
+                            fontSize: compact ? 28 : 22,
+                            height: compact ? 1.25 : 1.4,
                           ),
                           maxLines: 1,
                           cursorColor:
@@ -446,9 +446,12 @@ class _ConnectionPageState extends State<ConnectionPage>
                               counterText: '',
                               hintText: _idInputFocused.value
                                   ? null
-                                  : translate('Enter Remote ID'),
-                              contentPadding: const EdgeInsets.symmetric(
-                                  horizontal: 15, vertical: 13)),
+                                  : compact
+                                      ? 'Informe o ID Remoto'
+                                      : translate('Enter Remote ID'),
+                              contentPadding: EdgeInsets.symmetric(
+                                  horizontal: 15,
+                                  vertical: compact ? 15 : 13)),
                           controller: fieldTextEditingController,
                           inputFormatters: [IDTextInputFormatter()],
                           onChanged: (v) {
@@ -532,19 +535,22 @@ class _ConnectionPageState extends State<ConnectionPage>
             Padding(
               padding: const EdgeInsets.only(top: 13.0),
               child: Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-                SizedBox(
-                  height: 28.0,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      onConnect();
-                    },
-                    child: Text(translate("Connect")),
+	                SizedBox(
+	                  height: compact ? 36.0 : 28.0,
+	                  child: ElevatedButton(
+	                    onPressed: () {
+	                      onConnect();
+	                    },
+                    child: Text(
+                      translate("Connect"),
+                      style: TextStyle(fontSize: compact ? 18 : null),
+                    ),
                   ),
                 ),
                 const SizedBox(width: 8),
                 Container(
-                  height: 28.0,
-                  width: 28.0,
+                  height: compact ? 36.0 : 28.0,
+                  width: compact ? 36.0 : 28.0,
                   decoration: BoxDecoration(
                     border: Border.all(color: Theme.of(context).dividerColor),
                     borderRadius: BorderRadius.circular(8),
